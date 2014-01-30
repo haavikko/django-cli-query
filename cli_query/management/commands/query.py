@@ -1,3 +1,7 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from __future__ import unicode_literals
 # Copyright (c) 2009-2014 Dennis Kaarsemaker <dennis@kaarsemaker.net>
 # A command-line interface to query the Django ORM
 #
@@ -26,6 +30,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import input
+from builtins import str
+from builtins import *
 from django.db.models import Q
 from django.db.models.base import ModelBase
 from django.db.models.fields import FieldDoesNotExist
@@ -33,7 +42,6 @@ from django.core.exceptions import FieldError
 from django.core.management import BaseCommand, CommandError
 from django.template import loader, Template, Context, TemplateSyntaxError, TemplateDoesNotExist
 from django.conf import settings
-from optparse import make_option
 import os.path
 import sys
 
@@ -64,28 +72,30 @@ Operators you can filter with are listed on
 https://docs.djangoproject.com/en/dev/ref/models/querysets/#field-lookups"""
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        make_option('-a', '--application', dest="application", default=None,
-                    help="Use this application", metavar="APP"),
-        make_option('-m', '--model', dest="model", default=None,
-                    help="Query this model"),
-        make_option('-f', '--fields', dest="fields", default=None,
-                    help="Give these fields"),
-        make_option('-l', '--list-fields', dest="list_fields", default=False, action="store_true",
-                    help="List all available fields instead of running a query"),
-        make_option('-o', '--order', dest="order", default=None,
-                    help="Order by this field"),
-        make_option('-s', '--separator', dest="separator", default=",",
-                    help="Output separator"),
-        make_option('-t', '--template', dest="template", default='',
-                    help="Template in django syntax"),
-        make_option('-T', '--template-file', dest="template_file", default=None,
-                    help="File containing the template (abs/rel path or loader path)"),
-        make_option('-u', '--update', dest="updates", default=[], action="append",
-                    help="Updates to apply"),
-    )
     help = usage
     args = 'filter [filter ...]'
+
+    def add_arguments(self, parser):
+        parser.add_argument('-a', '--application', dest="application", default=None,
+                    help="Use this application", metavar="APP")
+        parser.add_argument('-m', '--model', dest="model", default=None,
+                    help="Query this model")
+        parser.add_argument('-f', '--fields', dest="fields", default=None,
+                    help="Give these fields")
+        parser.add_argument('-l', '--list-fields', dest="list_fields", default=False, action="store_true",
+                    help="List all available fields instead of running a query")
+        parser.add_argument('-o', '--order', dest="order", default=None,
+                    help="Order by this field")
+        parser.add_argument('-s', '--separator', dest="separator", default=",",
+                    help="Output separator")
+        parser.add_argument('-t', '--template', dest="template", default='',
+                    help="Template in django syntax")
+        parser.add_argument('-T', '--template-file', dest="template_file", default=None,
+                    help="File containing the template (abs/rel path or loader path)")
+        parser.add_argument('-u', '--update', dest="updates", default=[], action="append",
+                    help="Updates to apply")
+        parser.add_argument('args', nargs='+')
+
 
     def handle(self, *args, **options):
         if not options['application']:
@@ -153,7 +163,7 @@ class Command(BaseCommand):
                     sys.stdout.write('  ' +  key + ' ' * (keylen - len(key)))
                     sys.stdout.write(str(getattr(obj, key)) + ' ' * (vallen - len(str(getattr(obj,key)))))
                     sys.stdout.write('=> ' + updates[key] + "\n")
-            resp = raw_input("Apply changes? [y/N] ")
+            resp = input("Apply changes? [y/N] ")
             if resp.lower() != 'y':
                 self.stdout.write("Aborted")
             else:
@@ -201,7 +211,7 @@ class Command(BaseCommand):
 
             fields = options['fields'].split(',')
             for record in queryset:
-                self.stdout.write(options['separator'].join([unicode(getattr_r(record, x)) for x in fields]))
+                self.stdout.write(options['separator'].join([str(getattr_r(record, x)) for x in fields]))
 
 def make_filter(args):
     qargs = []
