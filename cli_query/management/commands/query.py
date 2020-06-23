@@ -107,9 +107,9 @@ class Command(BaseCommand):
 
         # Import the model
         models = '%s.models' % options['application']
-        if options['application'] not in settings.INSTALLED_APPS:
-            raise CommandError("Application %s not found in INSTALLED_APPS. All applications: \n - %s" %
-                    (options['application'], "\n - ".join(settings.INSTALLED_APPS)))
+        #if options['application'] not in settings.INSTALLED_APPS:
+        #    raise CommandError("Application %s not found in INSTALLED_APPS. All applications: \n - %s" %
+        #            (options['application'], "\n - ".join(settings.INSTALLED_APPS)))
         try:
             __import__(models)
         except ImportError:
