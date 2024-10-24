@@ -37,7 +37,7 @@ from builtins import str
 from builtins import *
 from django.db.models import Q
 from django.db.models.base import ModelBase
-from django.db.models.fields import FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist
 from django.core.exceptions import FieldError
 from django.core.management import BaseCommand, CommandError
 from django.template import loader, Template, Context, TemplateSyntaxError, TemplateDoesNotExist
